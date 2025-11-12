@@ -1,380 +1,341 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="pl">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.1">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rozkład jazdy PEKA Poznań</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Lato', sans-serif;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #0066cc;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .search-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        #stop-search {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            flex-grow: 1;
+            font-size: 1rem;
+        }
+        #search-button {
+            padding: 0.5rem 1rem;
+            background-color: #FFD700;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .time {
+            background-color: black;
+            color: #FFD700;
+            padding: 0.5rem 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            border-radius: 4px;
+            align-self: flex-end;
+        }
+        .schedule {
+            background-color: #f2f2f2;
+            padding: 1rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .line-number {
+            font-weight: bold;
+            min-width: 2rem;
+            text-align: center;
+            margin-right: 1rem;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+        .line-1 { background-color: #e74c3c; }
+        .line-2 { background-color: #3498db; }
+        .line-3 { background-color: #2ecc71; }
+        .line-4 { background-color: #9b59b6; }
+        .line-5 { background-color: #f39c12; }
+        .line-6 { background-color: #1abc9c; }
+        .line-7 { background-color: #d35400; }
+        .line-8 { background-color: #8e44ad; }
+        .line-9 { background-color: #c0392b; }
+        .line-10 { background-color: #27ae60; }
+        .line-11 { background-color: #16a085; }
+        .line-12 { background-color: #7f8c8d; }
+        .line-13 { background-color: #e67e22; }
+        .line-14 { background-color: #2980b9; }
+        .line-15 { background-color: #34495e; }
+        .line-16 { background-color: #95a5a6; }
+        .line-17 { background-color: #e74c3c; }
+        .line-18 { background-color: #3498db; }
+        .destination { flex-grow: 1; margin-right: 1rem; }
+        .departure-time {
+            font-weight: bold;
+            min-width: 3.5rem;
+            text-align: right;
+        }
+        .delayed {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .loading, .error {
+            text-align: center;
+            padding: 1rem;
+        }
+        .error { color: #e74c3c; }
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+        }
+        .autocomplete-items div {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9;
+        }
+        .autocomplete-active {
+            background-color: #0066cc !important;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="pl"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Rozkład jazdy MPK Poznań (Zbiorkom.live)&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>* { box-sizing: border-box; margin: 0; padding: 0; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Lato', sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>min-height: 100vh;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f5f5f5;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.header {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #046637;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.search-container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#stop-search {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex-grow: 1;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#search-button {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.5rem 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #FFD700;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.time {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: black;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #FFD700;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.5rem 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Share Tech Mono', monospace;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-self: flex-end;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.schedule {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f2f2f2;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>flex-grow: 1;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>overflow-y: auto;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.schedule-item {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.8rem 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid #ddd;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-number {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>min-width: 2rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-right: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.2rem 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-3 { background-color: #2ecc71; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-5 { background-color: #e74c3c; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-6 { background-color: #9b59b6; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-7 { background-color: #f39c12; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-8 { background-color: #1abc9c; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-9 { background-color: #34495e; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-10 { background-color: #3498db; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-11 { background-color: #e67e22; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-12 { background-color: #7f8c8d; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-13 { background-color: #d35400; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-14 { background-color: #8e44ad; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-15 { background-color: #c0392b; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-16 { background-color: #27ae60; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-17 { background-color: #16a085; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.line-18 { background-color: #2980b9; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.destination { flex-grow: 1; margin-right: 1rem; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.departure-time {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>min-width: 3.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: right;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.delayed {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #e74c3c;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.loading, .error {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.error { color: #e74c3c; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.autocomplete-items {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: absolute;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #d4d4d4;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-top: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>z-index: 99;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>top: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>left: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>right: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-height: 200px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>overflow-y: auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: white;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.autocomplete-items div {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.autocomplete-items div:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #e9e9e9;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.autocomplete-active {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #046637 !important;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="search-container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="text" id="stop-search" placeholder="Wyszukaj przystanek (np. Jasna Rola)" autocomplete="off"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button id="search-button"&gt;Szukaj&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="time" id="current-time"&gt;--:--&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="schedule" id="schedule"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="loading"&gt;Wpisz nazwę przystanku.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Lista przystanków (przykładowe dane)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const stops = [</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Jasna Rola", urlName: "Jasna-Rola" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Rondo Żegierskie", urlName: "Rondo-Żegierskie" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Dworzec Zachodni", urlName: "Dworzec-Zachodni" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Plac Wolności", urlName: "Plac-Wolności" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Os. Sobieskiego", urlName: "Os.-Sobieskiego" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Franowo", urlName: "Franowo" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Głogowska", urlName: "Głogowska" },</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Rondo Kaponiera", urlName: "Rondo-Kaponiera" }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Pobierz rozkład ze strony Zbiorkom.live</p>
-<p class="p1"><span class="Apple-converted-space">        </span>async function fetchDeparturesFromZbiorkom(stopUrlName) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const proxyUrl = 'https://cors-anywhere.herokuapp.com/';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const targetUrl = `https://zbiorkom.live/przystanek/${stopUrlName}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const response = await fetch(proxyUrl + targetUrl);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const html = await response.text();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>// Parsuj HTML (uproszczony przykład)</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const parser = new DOMParser();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const doc = parser.parseFromString(html, 'text/html');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>// Przykładowe selektory (trzeba dostosować do struktury strony!)</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const departures = [];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const rows = doc.querySelectorAll('.departure-row'); // Zmień na rzeczywisty selektor!</p>
-<p class="p1"><span class="Apple-converted-space">                </span>rows.forEach(row =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const line = row.querySelector('.line-number')?.textContent.trim() || '?';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const time = row.querySelector('.departure-time')?.textContent.trim() || '--:--';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const destination = row.querySelector('.destination')?.textContent.trim() || 'Nieznany';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const delayText = row.querySelector('.delay')?.textContent.trim() || '0';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const delay = parseInt(delayText.replace('min', '').trim()) || 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>departures.push({ line, time, destination, delay });</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>return departures;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>console.error("Błąd pobierania danych:", error);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return null;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Autouzupełnianie wyszukiwarki</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function setupAutocomplete() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const input = document.getElementById('stop-search');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>input.addEventListener('input', function() {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const val = this.value.toLowerCase();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>closeAllLists();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (!val) return false;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>const matches = stops.filter(stop =&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>stop.name.toLowerCase().includes(val)</p>
-<p class="p1"><span class="Apple-converted-space">                </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (matches.length === 0) return false;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>const list = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>list.setAttribute('id', 'autocomplete-list');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>list.setAttribute('class', 'autocomplete-items');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>this.parentNode.appendChild(list);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>matches.forEach(stop =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const item = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>item.innerHTML = `&lt;strong&gt;${stop.name}&lt;/strong&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>item.addEventListener('click', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>input.value = stop.name;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>loadScheduleForStop(stop.urlName);</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>closeAllLists();</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>list.appendChild(item);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// Obsługa klawiatury (strzałki, Enter)</p>
-<p class="p1"><span class="Apple-converted-space">            </span>input.addEventListener('keydown', function(e) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const list = document.getElementById('autocomplete-list');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (list) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const items = list.getElementsByTagName('div');</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (e.keyCode === 40) { // STRZAŁKA W DÓŁ</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>let current = list.getElementsByClassName('autocomplete-active')[0];</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (current) current.classList.remove('autocomplete-active');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (current &amp;&amp; current.nextSibling) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>current.nextSibling.classList.add('autocomplete-active');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>} else if (items.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>items[0].classList.add('autocomplete-active');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>} else if (e.keyCode === 38) { // STRZAŁKA W GÓRĘ</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>let current = list.getElementsByClassName('autocomplete-active')[0];</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (current) current.classList.remove('autocomplete-active');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (current &amp;&amp; current.previousSibling) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>current.previousSibling.classList.add('autocomplete-active');</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>} else if (e.keyCode === 13) { // ENTER</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>e.preventDefault();</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (list.getElementsByClassName('autocomplete-active')[0]) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>list.getElementsByClassName('autocomplete-active')[0].click();</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.addEventListener('click', function(e) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (e.target.id !== 'stop-search') closeAllLists();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function closeAllLists() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const lists = document.getElementsByClassName('autocomplete-items');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 0; i &lt; lists.length; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>lists[i].parentNode.removeChild(lists[i]);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Pobierz i wyświetl rozkład</p>
-<p class="p1"><span class="Apple-converted-space">        </span>async function loadScheduleForStop(stopUrlName) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const stop = stops.find(s =&gt; s.urlName === stopUrlName);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!stop) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('schedule').innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="loading"&gt;Ładowanie rozkładu dla ${stop.name}...&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const departures = await fetchDeparturesFromZbiorkom(stopUrlName);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!departures) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('schedule').innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="error"&gt;Nie udało się pobrać danych dla ${stop.name}.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>renderTrams(departures, stop.name);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Wyświetl rozkład</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function renderTrams(departures, stopName) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const now = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const scheduleElement = document.getElementById('schedule');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (departures.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>scheduleElement.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="loading"&gt;Brak odjazdów dla ${stopName}.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>// Przetwórz dane: oblicz minuty do odjazdu</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const trams = departures</p>
-<p class="p1"><span class="Apple-converted-space">                </span>.map(dep =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const [hours, minutes] = dep.time.split(':').map(Number);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const depTime = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>depTime.setHours(hours, minutes, 0);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const diffMinutes = Math.floor((depTime - now) / 60000);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const totalTime = Math.max(0, diffMinutes + dep.delay);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>return {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>line: dep.line,</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>destination: dep.destination,</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>time: totalTime,</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>delayed: dep.delay &gt; 0</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>};</p>
-<p class="p1"><span class="Apple-converted-space">                </span>})</p>
-<p class="p1"><span class="Apple-converted-space">                </span>.filter(dep =&gt; dep.time &gt;= 0)</p>
-<p class="p1"><span class="Apple-converted-space">                </span>.sort((a, b) =&gt; a.time - b.time)</p>
-<p class="p1"><span class="Apple-converted-space">                </span>.slice(0, 10);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>scheduleElement.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="schedule-item" style="font-weight: bold; background-color: #e9e9e9;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style="flex-grow: 1;"&gt;Przystanek: ${stopName}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>${trams.map(tram =&gt; `</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="schedule-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="line-number line-${tram.line}"&gt;${tram.line}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="destination-time-container" style="display: flex; justify-content: space-between; flex-grow: 1;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="destination"&gt;${tram.destination}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="departure-time ${tram.delayed ? 'delayed' : ''}"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>${tram.time} min ${tram.delayed ? '(opóźnienie)' : ''}</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`).join('')}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Obsługa przycisku "Szukaj"</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('search-button').addEventListener('click', () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const input = document.getElementById('stop-search');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const stopName = input.value;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!stopName) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>const stop = stops.find(s =&gt; s.name.toLowerCase() === stopName.toLowerCase());</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (stop) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>loadScheduleForStop(stop.urlName);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('schedule').innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="error"&gt;Nie znaleziono przystanku "${stopName}".&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Aktualizuje zegar</p>
-<p class="p1"><span class="Apple-converted-space">        </span>function updateClock() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const now = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('current-time').textContent =</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Odświeża co 30 sekund</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setInterval(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>updateClock();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}, 30000);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Inicjalizacja</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setupAutocomplete();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateClock();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+    <div class="header">
+        <div class="search-container">
+            <input type="text" id="stop-search" placeholder="Wyszukaj przystanek (np. Jasna Rola)" autocomplete="off">
+            <button id="search-button">Szukaj</button>
+        </div>
+        <div class="time" id="current-time">--:--</div>
+    </div>
+    <div class="schedule" id="schedule">
+        <div class="loading">Wpisz nazwę przystanku.</div>
+    </div>
+
+    <script>
+        // Lista przystanków (ID PEKA + nazwa)
+        const stops = [
+            { name: "Jasna Rola", stopId: "1054" },
+            { name: "Rondo Żegierskie", stopId: "1001" },
+            { name: "Dworzec Zachodni", stopId: "1002" },
+            { name: "Plac Wolności", stopId: "1003" },
+            { name: "Os. Sobieskiego", stopId: "1004" },
+            { name: "Franowo", stopId: "1005" },
+            { name: "Głogowska", stopId: "1006" },
+            { name: "Rondo Kaponiera", stopId: "1007" }
+        ];
+
+        // Pobierz rozkład z PEKA API
+        async function fetchDeparturesFromPEKA(stopId) {
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const targetUrl = `https://www.peka.poznan.pl/vm/mobile/departures.json?stop=${stopId}`;
+
+            try {
+                const response = await fetch(proxyUrl + targetUrl);
+                const data = await response.json();
+                return data.departures || [];
+            } catch (error) {
+                console.error("Błąd pobierania danych z PEKA:", error);
+                return null;
+            }
+        }
+
+        // Autouzupełnianie wyszukiwarki
+        function setupAutocomplete() {
+            const input = document.getElementById('stop-search');
+            input.addEventListener('input', function() {
+                const val = this.value.toLowerCase();
+                closeAllLists();
+                if (!val) return false;
+
+                const matches = stops.filter(stop =>
+                    stop.name.toLowerCase().includes(val)
+                );
+
+                if (matches.length === 0) return false;
+
+                const list = document.createElement('div');
+                list.setAttribute('id', 'autocomplete-list');
+                list.setAttribute('class', 'autocomplete-items');
+                this.parentNode.appendChild(list);
+
+                matches.forEach(stop => {
+                    const item = document.createElement('div');
+                    item.innerHTML = `<strong>${stop.name}</strong>`;
+                    item.addEventListener('click', () => {
+                        input.value = stop.name;
+                        loadScheduleForStop(stop.stopId, stop.name);
+                        closeAllLists();
+                    });
+                    list.appendChild(item);
+                });
+            });
+
+            // Obsługa klawiatury
+            input.addEventListener('keydown', function(e) {
+                const list = document.getElementById('autocomplete-list');
+                if (list) {
+                    const items = list.getElementsByTagName('div');
+                    if (e.keyCode === 40) { // STRZAŁKA W DÓŁ
+                        let current = list.getElementsByClassName('autocomplete-active')[0];
+                        if (current) current.classList.remove('autocomplete-active');
+                        if (current && current.nextSibling) {
+                            current.nextSibling.classList.add('autocomplete-active');
+                        } else if (items.length > 0) {
+                            items[0].classList.add('autocomplete-active');
+                        }
+                    } else if (e.keyCode === 38) { // STRZAŁKA W GÓRĘ
+                        let current = list.getElementsByClassName('autocomplete-active')[0];
+                        if (current) current.classList.remove('autocomplete-active');
+                        if (current && current.previousSibling) {
+                            current.previousSibling.classList.add('autocomplete-active');
+                        }
+                    } else if (e.keyCode === 13) { // ENTER
+                        e.preventDefault();
+                        if (list.getElementsByClassName('autocomplete-active')[0]) {
+                            list.getElementsByClassName('autocomplete-active')[0].click();
+                        }
+                    }
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target.id !== 'stop-search') closeAllLists();
+            });
+        }
+
+        function closeAllLists() {
+            const lists = document.getElementsByClassName('autocomplete-items');
+            for (let i = 0; i < lists.length; i++) {
+                lists[i].parentNode.removeChild(lists[i]);
+            }
+        }
+
+        // Pobierz i wyświetl rozkład
+        async function loadScheduleForStop(stopId, stopName) {
+            document.getElementById('schedule').innerHTML = `
+                <div class="loading">Ładowanie rozkładu dla ${stopName}...</div>
+            `;
+
+            const departures = await fetchDeparturesFromPEKA(stopId);
+            if (!departures) {
+                document.getElementById('schedule').innerHTML = `
+                    <div class="error">Nie udało się pobrać danych dla ${stopName}.</div>
+                `;
+                return;
+            }
+
+            renderTrams(departures, stopName);
+        }
+
+        // Wyświetl rozkład
+        function renderTrams(departures, stopName) {
+            const now = new Date();
+            const scheduleElement = document.getElementById('schedule');
+
+            if (departures.length === 0) {
+                scheduleElement.innerHTML = `
+                    <div class="loading">Brak odjazdów dla ${stopName}.</div>
+                `;
+                return;
+            }
+
+            // Przetwórz dane: oblicz minuty do odjazdu
+            const trams = departures
+                .map(dep => {
+                    const depTime = new Date(dep.time);
+                    const diffMinutes = Math.floor((depTime - now) / 60000);
+                    return {
+                        line: dep.route.shortName,
+                        destination: dep.route.direction,
+                        time: Math.max(0, diffMinutes),
+                        delayed: dep.delay > 0
+                    };
+                })
+                .filter(dep => dep.time >= 0)
+                .sort((a, b) => a.time - b.time)
+                .slice(0, 10);
+
+            scheduleElement.innerHTML = `
+                <div class="schedule-item" style="font-weight: bold; background-color: #e9e9e9;">
+                    <div style="flex-grow: 1;">Przystanek: ${stopName}</div>
+                </div>
+                ${trams.map(tram => `
+                    <div class="schedule-item">
+                        <div class="line-number line-${tram.line}">${tram.line}</div>
+                        <div class="destination-time-container" style="display: flex; justify-content: space-between; flex-grow: 1;">
+                            <span class="destination">${tram.destination}</span>
+                            <span class="departure-time ${tram.delayed ? 'delayed' : ''}">
+                                ${tram.time} min ${tram.delayed ? '(opóźnienie)' : ''}
+                            </span>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Obsługa przycisku "Szukaj"
+        document.getElementById('search-button').addEventListener('click', () => {
+            const input = document.getElementById('stop-search');
+            const stopName = input.value;
+            if (!stopName) return;
+
+            const stop = stops.find(s => s.name.toLowerCase() === stopName.toLowerCase());
+            if (stop) {
+                loadScheduleForStop(stop.stopId, stop.name);
+            } else {
+                document.getElementById('schedule').innerHTML = `
+                    <div class="error">Nie znaleziono przystanku "${stopName}".</div>
+                `;
+            }
+        });
+
+        // Aktualizuje zegar
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('current-time').textContent =
+                `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // Odświeża co 30 sekund
+        setInterval(() => {
+            updateClock();
+        }, 30000);
+
+        // Inicjalizacja
+        setupAutocomplete();
+        updateClock();
+    </script>
 </body>
 </html>
